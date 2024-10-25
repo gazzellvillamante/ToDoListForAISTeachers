@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:background="@color/black"
+    tools:context=".SendEmail">
+
+    <EditText
+        android:id="@+id/etRecipientEmail"
+        android:layout_width="360dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="98dp"
+        android:background="@drawable/custom_edittext2"
+        android:hint="Recipient's email"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:backgroundTint="@color/white"
+        tools:ignore="MissingConstraints" />
+
+
+    <EditText
+        android:id="@+id/etSubject"
+        android:layout_width="360dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/custom_edittext2"
+        android:hint="Subject"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etRecipientEmail" />
+
+    <EditText
+        android:id="@+id/etMessage"
+        android:layout_width="360dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/custom_edittext2"
+        android:hint="Message"
+        android:textColor="@color/black"
+        android:lines="5"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etSubject" />
+
+    <Button
+        android:id="@+id/btnSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:backgroundTint="@color/red"
+        android:text="Send"
+        android:textSize="18sp"
+        app:cornerRadius="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etMessage" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
