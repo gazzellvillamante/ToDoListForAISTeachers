@@ -1,5 +1,7 @@
 package com.assignment.todolistforaisteachers
 
+
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -16,8 +18,15 @@ import com.google.android.material.textfield.TextInputEditText
 
 class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
 {
+
+    interface OnTaskSavedListener {
+        fun onTaskSaved()
+    }
+
     private lateinit var binding: FragmentNewTaskSheetBinding
     private lateinit var db: DatabaseHelper
+    private var listener: OnTaskSavedListener? = null
+
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,6 +61,20 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         return binding.root
     }
 
+    override fun onAttach(context: Context){
+        super.onAttach(context)
+        if(context is OnTaskSavedListener) {
+            listener = context
+        } else {
+            throw RuntimeException("$context must implement onTaskSavedListener")
+        }
+    }
+
+    override fun onDetach(){
+        super.onDetach()
+        listener = null
+    }
+
     private fun saveAction() {
         // Get the task name and description
         val name = binding.taskName.text.toString()
@@ -82,6 +105,7 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         binding.taskDescription.setText("")
 
         // Dismiss Dialog after saving
+        listener?.onTaskSaved()
         dismiss()
     }
 

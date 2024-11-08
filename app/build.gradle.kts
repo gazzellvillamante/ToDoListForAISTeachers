@@ -47,14 +47,14 @@ android {
 
 dependencies {
 
-    implementation ("com.google.android.material:material:1.9.0")
+    implementation (libs.material.v190)
     //implementation("androidx.appcompat:appcompat:1.3.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation("androidx.core:core-splashscreen:1.0.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.fragment.ktx)
@@ -63,7 +63,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.android.material:material:1.2.1")
+    implementation(libs.play.services.maps)
+    implementation(libs.material.v121)
 
 }

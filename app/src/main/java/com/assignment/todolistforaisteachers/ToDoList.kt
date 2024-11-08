@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.assignment.todolistforaisteachers.databinding.ActivityToDoListBinding
 
-class ToDoList : AppCompatActivity(), TaskItemClickListener {
+class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTaskSavedListener {
 
     private lateinit var taskViewModel: TaskViewModel
 
@@ -35,6 +35,7 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
 
         db = DatabaseHelper(this)
 
+        setRecyclerView()
 
         binding.btnBack.setOnClickListener{
             val intentBack = Intent(this, MainMenu::class.java)
@@ -55,21 +56,26 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
             }
         }
 
-        setRecyclerView()
+
 
     }
+
 
     private fun setRecyclerView()
     {
-        val mainActivity = this
-        taskViewModel.taskItems.observe(this){
-            binding.todoListRecyclerview.apply {
-                layoutManager = LinearLayoutManager(applicationContext)
-                adapter = TaskItemAdapter(db.showTask(), mainActivity)
+        val taskList = db.showTask()
+        adapter = TaskItemAdapter(taskList, this)
+        binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+        binding.todoListRecyclerview.adapter = adapter
+    }
 
-            }
+    override fun onTaskSaved(){
+        val updatedTaskList = db.showTask()
+        if(updatedTaskList != null){
+            adapter.updateData(updatedTaskList)
         }
     }
+
 
     override fun editTaskItem(taskItem: TaskItem)
     {
@@ -142,6 +148,11 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
         val alertDialogBox = alertDialog.create()
 
         alertDialogBox.show()
+    }
+
+    override fun onPause(){
+        super.onPause()
+        Log.d("ToDoList", "Activity pause - NewTaskSheet is shown")
     }
 
 }
