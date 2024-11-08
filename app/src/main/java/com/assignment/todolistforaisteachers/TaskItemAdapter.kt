@@ -6,19 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.assignment.todolistforaisteachers.databinding.TaskItemCellBinding
 
 class TaskItemAdapter(
-    private val taskItems: MutableList<TaskItem>,
-    private val clickListener: TaskItemClickListener
+    private var taskItems : MutableList<TaskItem>,
+    private val clickListener : TaskItemClickListener
 ): RecyclerView.Adapter<TaskItemViewHolder>()
 
 {
-    /**fun removeTaskItem(taskItem: TaskItem){
-        val position = taskItems.indexOf(taskItem)
-        if(position != -1){
-            taskItems.removeAt(position)
-            notifyItemRemoved(position)
-        }
-    }**/
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskItemViewHolder {
         val from = LayoutInflater.from(parent.context)
@@ -27,11 +19,14 @@ class TaskItemAdapter(
         return TaskItemViewHolder(parent.context, binding, clickListener)
     }
 
+    override fun getItemCount(): Int = taskItems.size
+
     override fun onBindViewHolder(holder: TaskItemViewHolder, position: Int) {
         holder.bindTaskItem(taskItems[position])
     }
 
-    fun updateData(){
+    fun updateData(newData: MutableList<TaskItem>){
+        taskItems = newData
         notifyDataSetChanged()
     }
 
@@ -39,5 +34,5 @@ class TaskItemAdapter(
         notifyItemRemoved(position)
     }
 
-    override fun getItemCount(): Int = taskItems.size
+
 }

@@ -1,7 +1,10 @@
 package com.assignment.todolistforaisteachers
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +18,12 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
 
     private lateinit var binding: ActivityToDoListBinding
 
+    private lateinit var db: DatabaseHelper
+
+    private lateinit var adapter: TaskItemAdapter
+
+
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -24,8 +33,26 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
 
         taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
+        db = DatabaseHelper(this)
+
+
+        binding.btnBack.setOnClickListener{
+            val intentBack = Intent(this, MainMenu::class.java)
+            try{
+                startActivity(intentBack)
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
         binding.btnNewTask.setOnClickListener {
-            NewTaskSheet(null).show(supportFragmentManager, "newTaskTag")
+            try{
+                NewTaskSheet(null).show(supportFragmentManager, "newTaskTag")
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
         }
 
         setRecyclerView()
@@ -38,7 +65,7 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
         taskViewModel.taskItems.observe(this){
             binding.todoListRecyclerview.apply {
                 layoutManager = LinearLayoutManager(applicationContext)
-                adapter = TaskItemAdapter(it, mainActivity)
+                adapter = TaskItemAdapter(db.showTask(), mainActivity)
 
             }
         }
@@ -73,12 +100,39 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener {
     override fun deleteTaskItem(taskItem: TaskItem) {
         val alertDialog = AlertDialog.Builder(this)
 
+        System.out.println("test "+ taskItem.id)
         alertDialog.setTitle("Delete Task")
         alertDialog.setMessage("Are you sure you want to delete this task?")
 
-        //Got this Alert Dialog code from https://developer.android.com/develop/ui/views/components/dialogs
         alertDialog.setPositiveButton("Yes") { _, _ ->
-            taskViewModel.deleteTask(taskItem)
+
+            val deleted = db.deleteTask(taskItem.id)
+
+            if(deleted != 0){
+                val updatedTaskList = db.showTask()
+
+                if(updatedTaskList != null){
+                    adapter.updateData(updatedTaskList)
+
+                } else {
+                    Log.e("ToDoList", "Failed updated data after deletion")
+                }
+            } else {
+                Log.e("FailedDelete", "Failed delete")
+            }
+
+//            // Deletes record from the database
+//            db.deleteTask(taskItem.id)
+//
+//            // Update the task list from the database
+//            val updatedTaskList = db.showTask()
+//
+//            // Update the adapter with the new task list
+//            adapter.updateData(updatedTaskList)
+//
+//            // You can also notify the adapter directly like so:
+//
+//            //taskViewModel.deleteTask(taskItem)
         }
 
         alertDialog.setNegativeButton("No") { dialog, _ ->

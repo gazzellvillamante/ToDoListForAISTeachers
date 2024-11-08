@@ -42,7 +42,7 @@
                 android:textStyle="bold" />
 
             <EditText
-                android:id="@+id/txtUsername"
+                android:id="@+id/etUsername"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginTop="30dp"
@@ -50,11 +50,12 @@
                 android:drawableLeft="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"
                 android:hint="Username"
+                android:textColorHint="@color/grey"
                 android:padding="8dp"
                 android:textColor="@color/black" />
 
             <EditText
-                android:id="@+id/txtPassword"
+                android:id="@+id/etPassword"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
@@ -63,6 +64,7 @@
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
                 android:hint="Password"
+                android:textColorHint="@color/grey"
                 android:padding="8dp"
                 android:textColor="@color/black" />
 

@@ -37,5 +37,16 @@ class DialAPhone : AppCompatActivity() {
                 Toast.makeText(this, "Please enter a mobile number", Toast.LENGTH_LONG).show()
             }
         }
+
+        binding.btnBack.setOnClickListener{
+            val intentBack = Intent(this, MainMenu::class.java)
+
+            try{
+                startActivity(intentBack)
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

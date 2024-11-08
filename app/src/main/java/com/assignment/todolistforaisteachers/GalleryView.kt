@@ -1,26 +1,32 @@
 package com.assignment.todolistforaisteachers
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.assignment.todolistforaisteachers.databinding.ActivityDialAphoneBinding
 import com.assignment.todolistforaisteachers.databinding.ActivityGalleryViewBinding
 
 class GalleryView : AppCompatActivity() {
 
     private lateinit var button: Button
+    private lateinit var backButton: ImageView
     private lateinit var imageView: ImageView
 
-    //private lateinit var binding: ActivityGalleryViewBinding
 
-    companion object{
-
-        val IMAGE_REQUEST_CODE = 100
-
+    // Declare the launcher at the class level
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        // Handle the selected image URI
+        uri?.let {
+            imageView.setImageURI(uri) // Set the selected image to the ImageView
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,24 +34,36 @@ class GalleryView : AppCompatActivity() {
         setContentView(R.layout.activity_gallery_view)
 
         button = findViewById(R.id.btnChoose)
+        backButton = findViewById(R.id.btnBack)
         imageView = findViewById(R.id.saveImage)
 
+
         button.setOnClickListener{
-            pickImageGallery()
+            try{
+                pickImageGallery()
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
         }
+
+        backButton.setOnClickListener{
+            val intentBack = Intent(this, MainMenu::class.java)
+            try{
+                startActivity(intentBack)
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
     }
 
     private fun pickImageGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, IMAGE_REQUEST_CODE)
+
+        // Launch the image picker with the "image/*" MIME type
+        pickImageLauncher.launch("image/*")
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
-        super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == IMAGE_REQUEST_CODE && resultCode == RESULT_OK){
-            imageView.setImageURI(data?.data)
-        }
-    }
 }

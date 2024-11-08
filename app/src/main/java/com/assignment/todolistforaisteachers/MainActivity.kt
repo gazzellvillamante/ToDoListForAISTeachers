@@ -36,10 +36,10 @@ class MainActivity : AppCompatActivity() {
         databaseHelper = DatabaseHelper(this)
 
         binding.btnlogin.setOnClickListener {
-            val username = binding.txtUsername.text.toString()
-            val password = binding.txtPassword.text.toString()
+            val username = binding.etUsername.text.toString()
+            val password = binding.etPassword.text.toString()
 
-            if(username != "" && password != ""){
+            if(username.isNotEmpty() && password.isNotEmpty()){
                 try{
                     loginDataBase(username, password)
                 }
@@ -50,46 +50,44 @@ class MainActivity : AppCompatActivity() {
             else{
                 Toast.makeText(this, "Please enter username and password", Toast.LENGTH_LONG).show()
             }
+
+
         }
 
         //Redirects the user to the Sign Up page when sign up button is clicked
         binding.btnsignUp.setOnClickListener{
+
             try{
                 val intent = Intent(this, SignUp::class.java)
                 startActivity(intent)
                 finish()
             }
+
             catch( e : Exception){
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
             }
         }
-            /**if (username == "user" && password == "1234") {
-                startActivity(Intent(this, MainMenu::class.java)
-                    .putExtra("username",username)
-                    .putExtra("password",password))
-
-                val intent = Intent(this, MainMenu::class.java)
-                startActivity(intent)
-
-                Toast.makeText(this, "Login Successful!", Toast.LENGTH_SHORT).show();
-
-            } else {
-                Toast.makeText(this, "Login Failed!", Toast.LENGTH_SHORT).show();
-            }**/
 
     }
 
     private fun loginDataBase(username: String, password: String){
-        val userExists = databaseHelper.readUser(username, password)
+        val validUsernamePassword = databaseHelper.checkUsernamePassword(username, password)
 
-        if(userExists){
-            Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, MainMenu::class.java)
-            startActivity(intent)
-            finish()
+        try {
+            if (validUsernamePassword) {
+                Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainMenu::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            else {
+                Toast.makeText(this, "Login Failed. Invalid username or password", Toast.LENGTH_SHORT).show()
+            }
         }
-        else{
-            Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
+
+        catch(e : Exception){
+            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
         }
     }
 

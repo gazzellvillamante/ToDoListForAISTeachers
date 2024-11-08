@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:background="@color/black"
+        app:cardBackgroundColor="@color/white"
         android:layout_marginBottom="13dp"
         app:cardElevation="20dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -38,7 +39,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="188dp"
+        android:layout_marginBottom="60dp"
         android:background="@drawable/custom_edittext2"
         android:orientation="vertical"
         android:padding="24dp"
@@ -54,6 +55,7 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             android:text="Sign Up"
+            android:textColor="@color/white"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -61,6 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:textColor="@color/white"
             android:gravity="left"
             android:text="Username:"
             android:textSize="18sp" />
@@ -68,17 +71,21 @@
         <EditText
             android:id="@+id/txtUsername"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:background="@drawable/custom_edittext2"
             android:drawablePadding="8dp"
             android:padding="8dp"
-            android:textColor="@color/black"
+            android:hint="Username"
+            android:textColorHint="@color/grey"
+            android:textColor="@color/grey"
+            android:autofillHints="username"
             app:layout_constraintTop_toBottomOf="@+id/etMessage" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:textColor="@color/white"
             android:gravity="left"
             android:text="Password:"
             android:textSize="18sp" />
@@ -86,17 +93,21 @@
         <EditText
             android:id="@+id/txtPassword"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:background="@drawable/custom_edittext2"
             android:drawablePadding="8dp"
             android:inputType="textPassword"
+            android:hint="Password"
+            android:textColorHint="@color/grey"
+            android:autofillHints="password"
             android:padding="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/grey" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:textColor="@color/white"
             android:gravity="left"
             android:text="Confirm Password:"
             android:textSize="18sp" />
@@ -104,12 +115,15 @@
         <EditText
             android:id="@+id/txtConfirmPassword"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="50dp"
             android:background="@drawable/custom_edittext2"
             android:drawablePadding="8dp"
             android:inputType="textPassword"
+            android:hint="Confirm Password"
+            android:textColorHint="@color/grey"
+            android:autofillHints="password"
             android:padding="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/grey" />
 
         <Button
             android:id="@+id/btnSignUp"

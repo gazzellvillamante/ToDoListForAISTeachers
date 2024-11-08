@@ -12,7 +12,7 @@ import com.google.android.material.navigation.NavigationView
 
 class MainMenu : AppCompatActivity() {
 
-    private lateinit var toggle: ActionBarDrawerToggle
+    //private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +32,7 @@ class MainMenu : AppCompatActivity() {
 
 
         navView.setNavigationItemSelectedListener {
+
             when(it.itemId){
                 R.id.nav_taskMaster -> startActivity(toDoList)
 

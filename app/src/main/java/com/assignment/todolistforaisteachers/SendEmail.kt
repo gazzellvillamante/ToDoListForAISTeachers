@@ -47,6 +47,17 @@ class SendEmail : AppCompatActivity() {
 
         }
 
+        binding.btnBack.setOnClickListener{
+            val intentBack = Intent(this, MainMenu::class.java)
+
+            try{
+                startActivity(intentBack)
+            }
+            catch(e: Exception) {
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
 
     }
 }

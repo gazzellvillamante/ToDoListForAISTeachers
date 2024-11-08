@@ -16,16 +16,16 @@ class TaskItemViewHolder(
     {
         binding.name.text = taskItem.name
 
-        if(taskItem.isCompleted()){
-            binding.name.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-        }
+//        if(taskItem.isCompleted()){
+//            binding.name.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+//        }
+//
+//        binding.btnComplete.setImageResource(taskItem.imageResource())
+//        binding.btnComplete.setColorFilter(taskItem.imageColor(context))
 
-        binding.btnComplete.setImageResource(taskItem.imageResource())
-        binding.btnComplete.setColorFilter(taskItem.imageColor(context))
-
-        binding.btnComplete.setOnClickListener{
-            clickListener.completeTaskItem(taskItem)
-        }
+//        binding.btnComplete.setOnClickListener{
+//            clickListener.completeTaskItem(taskItem)
+//        }
 
         binding.taskCellContainer.setOnClickListener{
             clickListener.editTaskItem(taskItem)

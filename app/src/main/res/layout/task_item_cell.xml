@@ -11,6 +11,7 @@
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:background="@color/darkGrey"
         android:orientation="horizontal">
 
         <ImageButton
@@ -22,6 +23,7 @@
             android:layout_gravity="center"
             android:scaleY="1.25"
             android:scaleX="1.25"
+            android:backgroundTint="@color/darkGrey"
             android:contentDescription="CheckBox"
             />
 

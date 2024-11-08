@@ -9,6 +9,33 @@
 
     tools:context=".BrowseWeb">
 
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="16dp"
+        android:text="Browse Web"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/textview"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/baseline_arrow_back_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btnBrowseWeb"
         android:layout_width="236dp"
@@ -16,7 +43,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="300dp"
         android:backgroundTint="@color/red"
-        android:text="Browse Web"
+        android:text="Click Here"
         android:textSize="20dp"
         app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
