@@ -8,8 +8,8 @@ import java.util.UUID
 
 data class TaskItem (
     val id: Int,
-    val name: String,
-    val desc: String,
+    var name: String,
+    var desc: String,
     val isCompleted: Boolean
 
     )

@@ -43,6 +43,8 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
             val editable = Editable.Factory.getInstance()
             binding.taskName.text = editable.newEditable(taskItem!!.name)
             binding.taskDescription.text = editable.newEditable(taskItem!!.desc)
+
+            //db.editTask(taskItem!!)
         }
 
         else
@@ -97,7 +99,11 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         }
 
         else{
-            //taskViewModel.updateTaskItem(taskItem!!.id,name, desc)
+            // Edit existing task
+            taskItem?.name = name
+            taskItem?.desc = desc
+            db.editTask(taskItem!!)
+            Toast.makeText(context, "Task added updated", Toast.LENGTH_SHORT).show()
         }
 
         // Clear input fields after saving

@@ -154,38 +154,6 @@ class DatabaseHelper(val context: Context) :
         return taskList
     }
 
-    // Function to get a task by ID
-    fun getTaskById(taskId: Int): TaskItem? {
-        val db = readableDatabase
-        var taskItem: TaskItem? = null
-
-        // Query to fetch task by ID
-        val cursor = db.query(
-            TABLE_TASKS,
-            null,
-            "$COLUMN_TASKID = ?",
-            arrayOf(taskId.toString()),
-            null,
-            null,
-            null
-        )
-
-        // Check if a task is found and create TaskItem
-        if (cursor != null && cursor.moveToFirst()) {
-            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TASKID))
-            val name = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKNAME))
-            val desc = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKDESC))
-            val isCompleted = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_COMPLETED)) == 1
-
-            taskItem = TaskItem(id, name, desc, isCompleted)
-        }
-
-        cursor?.close()
-        db.close()
-
-        return taskItem
-    }
-
     // Function to delete a task from the database
     fun deleteTask(taskId: Int): Int {
         val db = writableDatabase
@@ -196,5 +164,24 @@ class DatabaseHelper(val context: Context) :
         db.close()
 
         return rowsAffected
+    }
+
+    fun editTask(taskItem: TaskItem) {
+        val db = writableDatabase
+
+        // Holds the values that will be updated in the database
+        val values = ContentValues().apply {
+            put(COLUMN_TASKNAME, taskItem.name)
+            put(COLUMN_TASKDESC, taskItem.desc)
+        }
+
+        // Determines which row to update through task id
+        val whereClause = "$COLUMN_TASKID = ?"
+        val whereArgs = arrayOf(taskItem.id.toString())
+
+        db.update(TABLE_TASKS, values, whereClause, whereArgs)
+
+        db.close()
+
     }
 }
