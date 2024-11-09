@@ -71,9 +71,7 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
 
     override fun onTaskSaved(){
         val updatedTaskList = db.showTask()
-        if(updatedTaskList != null){
-            adapter.updateData(updatedTaskList)
-        }
+        adapter.updateData(updatedTaskList)
     }
 
 
@@ -115,30 +113,14 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
             val deleted = db.deleteTask(taskItem.id)
 
             if(deleted != 0){
+                db.deleteTask(deleted)
                 val updatedTaskList = db.showTask()
 
-                if(updatedTaskList != null){
-                    adapter.updateData(updatedTaskList)
-
-                } else {
-                    Log.e("ToDoList", "Failed updated data after deletion")
-                }
+                adapter.updateData(updatedTaskList)
             } else {
                 Log.e("FailedDelete", "Failed delete")
             }
 
-//            // Deletes record from the database
-//            db.deleteTask(taskItem.id)
-//
-//            // Update the task list from the database
-//            val updatedTaskList = db.showTask()
-//
-//            // Update the adapter with the new task list
-//            adapter.updateData(updatedTaskList)
-//
-//            // You can also notify the adapter directly like so:
-//
-//            //taskViewModel.deleteTask(taskItem)
         }
 
         alertDialog.setNegativeButton("No") { dialog, _ ->
