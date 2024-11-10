@@ -14,7 +14,7 @@ import com.assignment.todolistforaisteachers.databinding.ActivityToDoListBinding
 
 class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTaskSavedListener {
 
-    private lateinit var taskViewModel: TaskViewModel
+    //private lateinit var taskViewModel: TaskViewModel
 
     private lateinit var binding: ActivityToDoListBinding
 
@@ -31,7 +31,7 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         binding = ActivityToDoListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        //taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
 
         db = DatabaseHelper(this)
 
