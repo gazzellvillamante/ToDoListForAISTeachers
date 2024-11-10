@@ -149,6 +149,7 @@ class DatabaseHelper(val context: Context) :
         }
 
         cursor.close()
+
         db.close()
 
         return taskList
@@ -161,11 +162,13 @@ class DatabaseHelper(val context: Context) :
         val whereArgs = arrayOf(taskId.toString())
 
         val rowsAffected = db.delete(TABLE_TASKS, whereClause, whereArgs)
+
         db.close()
 
         return rowsAffected
     }
 
+    // Function to edit a task from the database
     fun editTask(taskItem: TaskItem) {
         val db = writableDatabase
 
@@ -184,4 +187,26 @@ class DatabaseHelper(val context: Context) :
         db.close()
 
     }
+
+    // Function to mark a task as completed or not completed in the database
+    fun markAsCompleted(taskId: Int, isCompleted: Boolean) {
+        val db = writableDatabase
+
+        // Create ContentValues to hold the updated status
+        val values = ContentValues().apply {
+            put(COLUMN_IS_COMPLETED, if (isCompleted) 1 else 0)
+        }
+
+        // Determines which row to mark as complete through task id
+        val whereClause = "$COLUMN_TASKID = ?"
+        val whereArgs = arrayOf(taskId.toString())
+
+        // Perform the update
+        db.update(TABLE_TASKS, values, whereClause, whereArgs)
+
+        db.close()
+    }
+
+
+
 }

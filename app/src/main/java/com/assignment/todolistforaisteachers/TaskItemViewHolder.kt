@@ -14,18 +14,8 @@ class TaskItemViewHolder(
 
     fun bindTaskItem(taskItem: TaskItem)
     {
-        binding.name.text = taskItem.name
-
-//        if(taskItem.isCompleted()){
-//            binding.name.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-//        }
-//
-//        binding.btnComplete.setImageResource(taskItem.imageResource())
-//        binding.btnComplete.setColorFilter(taskItem.imageColor(context))
-
-//        binding.btnComplete.setOnClickListener{
-//            clickListener.completeTaskItem(taskItem)
-//        }
+        binding.tvName.text = taskItem.name
+        binding.cbTask.isChecked = taskItem.isCompleted
 
         binding.taskCellContainer.setOnClickListener{
             clickListener.editTaskItem(taskItem)
@@ -35,6 +25,10 @@ class TaskItemViewHolder(
             clickListener.deleteTaskItem(taskItem)
         }
 
+        // Handle checkbox click
+        binding.cbTask.setOnCheckedChangeListener { _, isChecked ->
+            clickListener.completeTaskItem(taskItem, true)
+        }
     }
 
 

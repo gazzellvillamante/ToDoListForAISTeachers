@@ -14,23 +14,19 @@
         android:background="@color/darkGrey"
         android:orientation="horizontal">
 
-        <ImageButton
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnComplete"
+            android:id="@+id/cbTask"
             android:layout_marginHorizontal="15dp"
-            android:src="@drawable/baseline_radio_button_unchecked_24"
             android:layout_gravity="center"
-            android:scaleY="1.25"
-            android:scaleX="1.25"
-            android:backgroundTint="@color/darkGrey"
             android:contentDescription="CheckBox"
             />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/name"
+            android:id="@+id/tvName"
             android:text="Place Holder"
             style="@style/TextAppearance.AppCompat.Title"
             android:layout_gravity="center"

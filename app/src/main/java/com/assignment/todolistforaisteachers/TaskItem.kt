@@ -10,12 +10,12 @@ data class TaskItem (
     val id: Int,
     var name: String,
     var desc: String,
-    val isCompleted: Boolean
+    var isCompleted: Boolean
 
     )
 
 {
-//    fun isCompleted() = isCompleted
+    //fun isCompleted() = isCompleted
 //    fun imageResource():Int = if (isCompleted()) R.drawable.baseline_check_circle_outline_24 else R.drawable.baseline_radio_button_unchecked_24
 //    fun imageColor(context: Context): Int = if(isCompleted()) red(context) else black(context)
 

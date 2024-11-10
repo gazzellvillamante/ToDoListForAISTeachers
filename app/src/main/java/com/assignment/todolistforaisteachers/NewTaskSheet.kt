@@ -7,13 +7,9 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
-import com.assignment.todolistforaisteachers.databinding.ActivityMainBinding
 import com.assignment.todolistforaisteachers.databinding.FragmentNewTaskSheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.textfield.TextInputEditText
 
 
 class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
@@ -40,11 +36,11 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         if(taskItem != null)
         {
             binding.tvTaskTitle.text = "Edit Task"
+            binding.saveButton.text = "Update Task"
             val editable = Editable.Factory.getInstance()
             binding.taskName.text = editable.newEditable(taskItem!!.name)
             binding.taskDescription.text = editable.newEditable(taskItem!!.desc)
 
-            //db.editTask(taskItem!!)
         }
 
         else

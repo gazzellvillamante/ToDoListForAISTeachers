@@ -2,17 +2,11 @@ package com.assignment.todolistforaisteachers
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import com.assignment.todolistforaisteachers.databinding.ActivitySendEmailBinding
-import com.assignment.todolistforaisteachers.databinding.ActivityToDoListBinding
 
 class SendEmail : AppCompatActivity() {
 

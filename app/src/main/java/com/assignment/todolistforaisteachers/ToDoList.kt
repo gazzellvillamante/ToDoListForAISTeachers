@@ -55,15 +55,12 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
             }
         }
-
-
-
     }
-
 
     private fun setRecyclerView()
     {
         val taskList = db.showTask()
+
         adapter = TaskItemAdapter(taskList, this)
         binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
         binding.todoListRecyclerview.adapter = adapter
@@ -74,37 +71,41 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         adapter.updateData(updatedTaskList)
     }
 
-
     override fun editTaskItem(taskItem: TaskItem)
     {
-        NewTaskSheet(taskItem).show(supportFragmentManager, "newTasktag")
+        try{
+            NewTaskSheet(taskItem).show(supportFragmentManager, "newTasktag")
+        }
+        catch(e : Exception){
+            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    override fun completeTaskItem(taskItem: TaskItem)
+    override fun completeTaskItem(taskItem: TaskItem, isChecked: Boolean)
     {
-        val alertDialog = AlertDialog.Builder(this)
-        alertDialog.setTitle("Complete Task")
-        alertDialog.setMessage("Are you sure you want to complete this task?")
+        try {
+            // Toggle the status
+            val newStatus = !taskItem.isCompleted
 
-        //Got this Alert Dialog code from https://developer.android.com/develop/ui/views/components/dialogs
-        alertDialog.setPositiveButton("Yes") { _, _ ->
-            taskViewModel.setCompleted(taskItem)
+            taskItem?.isCompleted = newStatus
+            db.markAsCompleted(taskItem.id, newStatus)
+
+            // After updating the database, refresh the RecyclerView data
+            val updatedTaskList = db.showTask()
+
+            adapter.updateData(updatedTaskList)
+
+        }
+        catch(e : Exception){
+            Toast.makeText(this, "Task successfully completed", Toast.LENGTH_SHORT).show()
         }
 
-        alertDialog.setNegativeButton("No") { dialog, _ ->
-            dialog.dismiss()
-        }
-
-        val alertDialogBox = alertDialog.create()
-
-        alertDialogBox.show()
     }
 
     override fun deleteTaskItem(taskItem: TaskItem) {
         val alertDialog = AlertDialog.Builder(this)
 
-        System.out.println("test "+ taskItem.id)
         alertDialog.setTitle("Delete Task")
         alertDialog.setMessage("Are you sure you want to delete this task?")
 
@@ -112,15 +113,19 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
 
             val deleted = db.deleteTask(taskItem.id)
 
-            if(deleted != 0){
-                db.deleteTask(deleted)
-                val updatedTaskList = db.showTask()
+            try{
+                if(deleted != 0) {
+                    db.deleteTask(deleted)
+                    val updatedTaskList = db.showTask()
 
-                adapter.updateData(updatedTaskList)
-            } else {
-                Log.e("FailedDelete", "Failed delete")
+                    adapter.updateData(updatedTaskList)
+
+                    Toast.makeText(this, "Successfuly deleted task", Toast.LENGTH_LONG).show()
+                }
             }
-
+            catch(e : Exception){
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
         }
 
         alertDialog.setNegativeButton("No") { dialog, _ ->
