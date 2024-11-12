@@ -2,20 +2,11 @@ package com.assignment.todolistforaisteachers
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
 import com.assignment.todolistforaisteachers.databinding.ActivityMainBinding
-import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,12 +27,12 @@ class MainActivity : AppCompatActivity() {
         databaseHelper = DatabaseHelper(this)
 
         binding.btnlogin.setOnClickListener {
-            val username = binding.etUsername.text.toString()
+            val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
 
-            if(username.isNotEmpty() && password.isNotEmpty()){
+            if(email.isNotEmpty() && password.isNotEmpty()){
                 try{
-                    loginDataBase(username, password)
+                    loginDataBase(email, password)
                 }
                 catch( e : Exception){
                     Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -70,8 +61,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun loginDataBase(username: String, password: String){
-        val validUsernamePassword = databaseHelper.checkUsernamePassword(username, password)
+    private fun loginDataBase(email: String, password: String){
+        val validUsernamePassword = databaseHelper.checkEmailPassword(email, password)
 
         try {
             if (validUsernamePassword) {

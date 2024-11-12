@@ -39,13 +39,19 @@ class SignUp : AppCompatActivity() {
 
 
     private fun signupDatabase(username: String, email: String, password: String, confirmpassword: String){
-        val userExists = databaseHelper.checkUserExists(username)
+        val userExists = databaseHelper.checkUserExists(username, email)
 
         try {
 
             if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmpassword.isEmpty()) {
                 Toast.makeText(this,"Sign up failed. Enter required fields data",Toast.LENGTH_SHORT
                 ).show()
+
+                return
+            }
+
+            else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                Toast.makeText(this, "Please enter a valid email", Toast.LENGTH_SHORT).show()
 
                 return
             }

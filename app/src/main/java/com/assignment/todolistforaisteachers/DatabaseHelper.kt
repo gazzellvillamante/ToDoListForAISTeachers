@@ -71,11 +71,11 @@ class DatabaseHelper(val context: Context) :
         return db.insert(TABLE_USERS, null, values)
     }
 
-    // Function to check username and password matches
-    fun checkUsernamePassword(username: String, password: String): Boolean {
+    // Function to check email and password matches
+    fun checkEmailPassword(email: String, password: String): Boolean {
         val db = readableDatabase
-        val query = "$COLUMN_USERNAME = ? AND $COLUMN_PASSWORD = ?"
-        val queryArgs = arrayOf(username, password)
+        val query = "$COLUMN_EMAIL = ? AND $COLUMN_PASSWORD = ?"
+        val queryArgs = arrayOf(email, password)
         val cursor = db.query(TABLE_USERS, null, query, queryArgs, null, null, null, null)
 
         val userExists = cursor.count > 0
@@ -87,12 +87,12 @@ class DatabaseHelper(val context: Context) :
     }
 
     // Function to check if a user already exists in the database
-    fun checkUserExists(username: String): Boolean {
+    fun checkUserExists(username: String, email: String): Boolean {
         val db = readableDatabase
 
         // Query to check if a user with the given username exists
-        val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_USERNAME = ?"
-        val cursor = db.rawQuery(query, arrayOf(username))
+        val query = "SELECT * FROM $TABLE_USERS WHERE $COLUMN_USERNAME = ? AND $COLUMN_EMAIL = ?"
+        val cursor = db.rawQuery(query, arrayOf(username, email))
 
         // If cursor has any results, that means the user exists
         val userExists = cursor.count > 0
@@ -110,6 +110,11 @@ class DatabaseHelper(val context: Context) :
 
         val dropTasksTableQuery = "DROP TABLE IF EXISTS $TABLE_TASKS"
         db?.execSQL(dropTasksTableQuery)
+
+//        val addEmailColumn = "ALTER TABLE $TABLE_USERS ADD COLUMN $COLUMN_EMAIL TEXT"
+//        if(oldVersion < newVersion){
+//            db?.execSQL(addEmailColumn)
+//        }
 
         // Recreate Tables
         onCreate(db)
