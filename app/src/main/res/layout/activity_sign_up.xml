@@ -87,6 +87,28 @@
             android:layout_marginTop="30dp"
             android:textColor="@color/white"
             android:gravity="left"
+            android:text="Email:"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/custom_edittext2"
+            android:drawablePadding="8dp"
+            android:padding="8dp"
+            android:hint="Email"
+            android:textColorHint="@color/grey"
+            android:textColor="@color/grey"
+            android:autofillHints="Email"
+            app:layout_constraintTop_toBottomOf="@+id/etMessage" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/white"
+            android:gravity="left"
             android:text="Password:"
             android:textSize="18sp" />
 

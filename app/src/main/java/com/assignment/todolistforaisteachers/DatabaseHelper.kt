@@ -15,6 +15,7 @@ class DatabaseHelper(val context: Context) :
         private const val TABLE_USERS = "users"
         private const val COLUMN_ID = "id"
         private const val COLUMN_USERNAME = "username"
+        private const val COLUMN_EMAIL = "email"
         private const val COLUMN_PASSWORD = "password"
         private const val COLUMN_CONFIRMPASSWORD = "confirmpassword"
         private const val TABLE_TASKS = "tasks"
@@ -32,6 +33,7 @@ class DatabaseHelper(val context: Context) :
             CREATE TABLE $TABLE_USERS (
                 $COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
                 $COLUMN_USERNAME TEXT, 
+                $COLUMN_EMAIL TEXT, 
                 $COLUMN_PASSWORD TEXT, 
                 $COLUMN_CONFIRMPASSWORD TEXT
             )
@@ -53,11 +55,12 @@ class DatabaseHelper(val context: Context) :
     }
 
     // Function to add users in the database
-    fun addUser(username: String, password: String, confirmpassword: String): Long {
+    fun addUser(username: String, email: String, password: String, confirmpassword: String): Long {
 
         // Holds the user details to be inserted into the database
         val values = ContentValues().apply {
             put(COLUMN_USERNAME, username)
+            put(COLUMN_EMAIL, email)
             put(COLUMN_PASSWORD, password)
             put(COLUMN_CONFIRMPASSWORD, confirmpassword)
         }

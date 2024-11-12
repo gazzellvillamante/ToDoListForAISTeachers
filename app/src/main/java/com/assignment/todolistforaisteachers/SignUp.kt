@@ -22,11 +22,12 @@ class SignUp : AppCompatActivity() {
 
         binding.btnSignUp.setOnClickListener{
             val username = binding.txtUsername.text.toString()
+            val email = binding.txtEmail.text.toString()
             val password = binding.txtPassword.text.toString()
             val confirmpassword = binding.txtConfirmPassword.text.toString()
 
             try{
-                signupDatabase(username,password,confirmpassword)
+                signupDatabase(username,email, password,confirmpassword)
             }
             catch(e : Exception){
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -37,12 +38,12 @@ class SignUp : AppCompatActivity() {
     }
 
 
-    private fun signupDatabase(username: String, password: String, confirmpassword: String){
+    private fun signupDatabase(username: String, email: String, password: String, confirmpassword: String){
         val userExists = databaseHelper.checkUserExists(username)
 
         try {
 
-            if (username.isEmpty() || password.isEmpty() || confirmpassword.isEmpty()) {
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmpassword.isEmpty()) {
                 Toast.makeText(this,"Sign up failed. Enter required fields data",Toast.LENGTH_SHORT
                 ).show()
 
@@ -70,7 +71,7 @@ class SignUp : AppCompatActivity() {
             }
 
             else {
-                val insertRowId = databaseHelper.addUser(username, password,confirmpassword)
+                val insertRowId = databaseHelper.addUser(username, email, password,confirmpassword)
                 val intent = Intent(this, MainActivity::class.java)
 
                 // Checks whether inserting of data into the db was successful or not
