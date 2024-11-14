@@ -6,8 +6,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/taskmasterloginbg"
-
-
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -87,6 +85,26 @@
                 android:text="Sign up"
                 android:textSize="18sp"
                 app:cornerRadius = "20dp"/>
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Or"
+                android:textAlignment="center"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btnLoginGoogle"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Sign in with Google"
+                android:drawableLeft="@drawable/google"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                app:cornerRadius="20dp"
+                android:textSize="18sp"/>
+
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

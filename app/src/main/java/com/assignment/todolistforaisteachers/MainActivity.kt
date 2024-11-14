@@ -6,6 +6,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.assignment.todolistforaisteachers.databinding.ActivityMainBinding
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.database
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -13,6 +23,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     lateinit var databaseHelper: DatabaseHelper
+
+    private lateinit var authFirebase: FirebaseAuth
+    private lateinit var databaseFirebase: DatabaseReference
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,21 +39,44 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         databaseHelper = DatabaseHelper(this)
+        val context = this
+
+
+        //initialize firebase
+        authFirebase = Firebase.auth
+        //initialize firebase database
+        databaseFirebase = Firebase.database.reference
 
         binding.btnlogin.setOnClickListener {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
 
-            if(email.isNotEmpty() && password.isNotEmpty()){
-                try{
-                    loginDataBase(email, password)
+            //Check if device is online
+            //If online use Firebase database
+            //If not use Local SQLite database
+            if(isDeviceOnline(context)){
+                if(email.isNotEmpty() && password.isNotEmpty()){
+                    try{
+                        loginFirebase(email, password)
+                    } catch(e:Exception){
+                        Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Please enter email and password", Toast.LENGTH_LONG).show()
                 }
-                catch( e : Exception){
-                    Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+
+            } else {
+                if(email.isNotEmpty() && password.isNotEmpty()){
+                    try{
+                        loginDataBase(email, password)
+                    }
+                    catch( e : Exception){
+                        Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+                    }
                 }
-            }
-            else{
-                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_LONG).show()
+                else{
+                    Toast.makeText(this, "Please enter email and password", Toast.LENGTH_LONG).show()
+                }
             }
 
 
@@ -55,6 +92,15 @@ class MainActivity : AppCompatActivity() {
             }
 
             catch( e : Exception){
+                Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        binding.btnLoginGoogle.setOnClickListener {
+            try{
+
+            }
+            catch(e:Exception) {
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
             }
         }
@@ -81,5 +127,40 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
         }
     }
+
+    //Login using google
+    private fun loginGoogle(){
+
+    }
+
+    //Check if device is online
+    private fun isDeviceOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+
+    }
+
+    //Sign in using firebase if device is online
+    private fun loginFirebase(email:String, password:String){
+        try{
+            authFirebase.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    val user = authFirebase.currentUser
+                    updateUI(user)
+                }
+            }
+        } catch(e:Exception) {
+            Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun updateUI(user:FirebaseUser?){
+        startActivity(Intent(this, MainMenu::class.java))
+        finish()
+    }
+
+
 
 }

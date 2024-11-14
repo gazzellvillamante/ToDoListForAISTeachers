@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "912514303248",
+    "project_id": "todolist-taskmaster",
+    "storage_bucket": "todolist-taskmaster.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912514303248:android:b598b08410d862f3e51195",
+        "android_client_info": {
+          "package_name": "com.assignment.todolistforaisteachers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912514303248-evpn4u1mvj9k1j27nmk39hcpq3lnq2kd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.assignment.todolistforaisteachers",
+            "certificate_hash": "2caad37608670a43f839dce660ec7f3da245f0f3"
+          }
+        },
+        {
+          "client_id": "912514303248-91ucc5uqdc8a3rqh7du0ap5met53b22h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgarg03hIAi_e9qT3U4mkn5B_UgUqRIWA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912514303248-91ucc5uqdc8a3rqh7du0ap5met53b22h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
