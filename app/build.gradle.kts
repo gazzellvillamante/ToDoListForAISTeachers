@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.auth)
     implementation(libs.firebase.database)
+    implementation(libs.firebase.common.ktx)
     //implementation(libs.androidx.navigation.fragment.ktx)
    // implementation(libs.androidx.navigation.ui.ktx)
     testImplementation(libs.junit)
