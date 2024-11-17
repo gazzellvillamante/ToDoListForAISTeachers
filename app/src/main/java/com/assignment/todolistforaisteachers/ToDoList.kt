@@ -51,6 +51,15 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
             }
         }
+
+        binding.btnSearch.setOnClickListener {
+            val searchString = binding.etSearch.text.toString()
+            try{
+                searchTask(searchString)
+            } catch(e:Exception){
+                Toast.makeText(this,e.message, Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun setRecyclerView()
@@ -136,6 +145,15 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
     override fun onPause(){
         super.onPause()
         Log.d("ToDoList", "Activity pause - NewTaskSheet is shown")
+    }
+
+    private fun searchTask(searchString: String) {
+        val tasks = db.searchTask(searchString)
+        if(tasks.isNotEmpty()){
+            adapter.updateData(tasks)
+        } else {
+            Toast.makeText(this, "No task found", Toast.LENGTH_SHORT).show()
+        }
     }
 
 }

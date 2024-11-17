@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.google.android.gms.tasks.Task
 
 class DatabaseHelper(val context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -163,6 +164,29 @@ class DatabaseHelper(val context: Context) :
         return taskList
     }
 
+    fun searchTask(searchString: String): MutableList<TaskItem> {
+        val taskList = mutableListOf<TaskItem>()
+        val db = readableDatabase
+        val query = "SELECT * FROM $TABLE_TASKS WHERE $COLUMN_TASKNAME LIKE ?"
+        val cursor = db.rawQuery(query, arrayOf("%$searchString"))
+
+        while(cursor.moveToNext()){
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TASKID))
+            val taskName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKNAME))
+            val taskDesc = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKDESC))
+            val isCompleted = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_COMPLETED)) == 1
+
+            val task = TaskItem(id, taskName, taskDesc, isCompleted)
+            taskList.add(task)
+        }
+
+        cursor.close()
+        db.close()
+
+        return taskList
+
+    }
+
     // Function to delete a task from the database
     fun deleteTask(taskId: Int): Int {
         val db = writableDatabase
@@ -214,7 +238,6 @@ class DatabaseHelper(val context: Context) :
 
         db.close()
     }
-
 
 
 }

@@ -9,7 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.assignment.todolistforaisteachers.databinding.FragmentNewTaskSheetBinding
+import com.assignment.todolistforaisteachers.model.TaskModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.database
 
 
 class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
@@ -22,6 +28,8 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
     private lateinit var binding: FragmentNewTaskSheetBinding
     private lateinit var db: DatabaseHelper
     private var listener: OnTaskSavedListener? = null
+    private lateinit var authFirebase: FirebaseAuth
+    private lateinit var databaseFirebase: DatabaseReference
 
 
 
@@ -31,6 +39,12 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
 
         // Initialization of database
         db = DatabaseHelper(activity)
+
+        //initialize Firebase
+        authFirebase = Firebase.auth
+        //initialize Firebase Database
+        databaseFirebase = Firebase.database.reference
+
 
         //Add Task and Edit Task shares the same fragement
         if(taskItem != null)
@@ -90,7 +104,7 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
 
             // Add task in the db
             db.addTask(newTask)
-
+            saveTaskData()
             Toast.makeText(context, "Task added successfully", Toast.LENGTH_SHORT).show()
         }
 
@@ -109,6 +123,17 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         // Dismiss Dialog after saving
         listener?.onTaskSaved()
         dismiss()
+    }
+
+    private fun saveTaskData() {
+        val taskName = binding.taskName.text.toString()
+        val taskDesc = binding.taskDescription.text.toString()
+        val isCompleted = false
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+        val task = TaskModel(taskName, taskDesc, isCompleted, userId)
+
+        databaseFirebase.child("task").child(userId).setValue(task)
     }
 
 }

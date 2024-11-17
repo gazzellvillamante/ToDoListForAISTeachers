@@ -66,8 +66,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
-
         <ImageView
             android:id="@+id/btnBack"
             android:layout_width="wrap_content"
@@ -79,32 +77,37 @@
             android:src="@drawable/baseline_arrow_back_24"
             />
 
-        <!--android:layout_width="match_parent"-->
-        <EditText
-            android:id="@+id/etSearch"
-            android:layout_width="353dp"
-            android:layout_height="50dp"
+        <LinearLayout
+            android:id="@+id/searchBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_margin="16dp"
-            android:background="@drawable/custom_edittext2"
-            android:hint=" Search..."
-            android:textColorHint="@color/grey"
-            android:inputType="textEmailAddress"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/white"
-            />
+            android:gravity="center_vertical">
 
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_edittext2"
+                android:backgroundTint="@color/white"
+                android:hint="Search..."
+                android:inputType="text"
+                android:padding="10dp"
+                android:textColor="@color/black"
+                android:textColorHint="@color/grey"
+                android:layout_marginEnd="8dp" />
 
-        <ImageView
-            android:id="@+id/btnSearch"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignEnd="@id/textview"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="373dp"
-            android:layout_marginTop="-65dp"
-            android:src="@drawable/baseline_search_24"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/btnSearch"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/baseline_search_24"
+                android:background="@drawable/custom_edittext2"
+                android:padding="10dp"
+                android:contentDescription="Search Button" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/todoListRecyclerview"
