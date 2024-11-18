@@ -168,7 +168,7 @@ class DatabaseHelper(val context: Context) :
         val taskList = mutableListOf<TaskItem>()
         val db = readableDatabase
         val query = "SELECT * FROM $TABLE_TASKS WHERE $COLUMN_TASKNAME LIKE ?"
-        val cursor = db.rawQuery(query, arrayOf("%$searchString"))
+        val cursor = db.rawQuery(query, arrayOf("%$searchString%"))
 
         while(cursor.moveToNext()){
             val id = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TASKID))
