@@ -2,6 +2,8 @@ package com.assignment.todolistforaisteachers
 
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -30,7 +32,6 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
     private var listener: OnTaskSavedListener? = null
     private lateinit var authFirebase: FirebaseAuth
     private lateinit var databaseFirebase: DatabaseReference
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,6 +88,16 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         listener = null
     }
 
+    //Check if device is online
+    fun isDeviceOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || activeNetwork.hasTransport(
+            NetworkCapabilities.TRANSPORT_CELLULAR)
+
+    }
+
     private fun saveAction() {
         // Get the task name and description
         val name = binding.taskName.text.toString()
@@ -100,11 +111,16 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
 
         // Add new task if taskItem is empty
         if (taskItem == null){
-           val newTask = TaskItem(0,name,desc,false)
+           val newTask = TaskItem(0,name,desc,false, 0)
 
-            // Add task in the db
-            db.addTask(newTask)
-            saveTaskData()
+
+            if (isDeviceOnline(requireContext())) {
+                saveTaskData()  // Uses Firebase when device is online
+            } else {
+                db.addTask(newTask) // Uses SQLite when device is offline
+            }
+
+
             Toast.makeText(context, "Task added successfully", Toast.LENGTH_SHORT).show()
         }
 

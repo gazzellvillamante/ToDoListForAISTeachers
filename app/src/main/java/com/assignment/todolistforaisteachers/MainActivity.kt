@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.database
 
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -41,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         databaseHelper = DatabaseHelper(this)
         val context = this
 
-
         //initialize firebase
         authFirebase = Firebase.auth
         //initialize firebase database
@@ -51,10 +49,12 @@ class MainActivity : AppCompatActivity() {
             val email = binding.etEmail.text.toString()
             val password = binding.etPassword.text.toString()
 
+
             //Check if device is online
             //If online use Firebase database
             //If not use Local SQLite database
             if(isDeviceOnline(context)){
+
                 if(email.isNotEmpty() && password.isNotEmpty()){
                     try{
                         loginFirebase(email, password)
@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                 if(email.isNotEmpty() && password.isNotEmpty()){
                     try{
                         loginDataBase(email, password)
+                        databaseHelper.setLoginUser(email, password)
                     }
                     catch( e : Exception){
                         Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -110,6 +111,7 @@ class MainActivity : AppCompatActivity() {
     private fun loginDataBase(email: String, password: String){
         val validUsernamePassword = databaseHelper.checkEmailPassword(email, password)
 
+
         try {
             if (validUsernamePassword) {
                 Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     //Check if device is online
-    private fun isDeviceOnline(context: Context): Boolean {
+    fun isDeviceOnline(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false

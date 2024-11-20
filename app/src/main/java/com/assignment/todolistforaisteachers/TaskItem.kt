@@ -5,6 +5,6 @@ data class TaskItem (
     val id: Int,
     var name: String,
     var desc: String,
-    var isCompleted: Boolean
-
+    var isCompleted: Boolean,
+    var taskUserId: Int
     )

@@ -1,7 +1,9 @@
 package com.assignment.todolistforaisteachers
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.google.android.gms.tasks.Task
@@ -14,18 +16,21 @@ class DatabaseHelper(val context: Context) :
         private const val DATABASE_NAME = "ToDoList.db"
         private const val DATABASE_VERSION = 1
         private const val TABLE_USERS = "users"
-        private const val COLUMN_ID = "id"
+        private const val COLUMN_ID = "user_id"
         private const val COLUMN_USERNAME = "username"
         private const val COLUMN_EMAIL = "email"
         private const val COLUMN_PASSWORD = "password"
         private const val COLUMN_CONFIRMPASSWORD = "confirmpassword"
         private const val TABLE_TASKS = "tasks"
-        private const val COLUMN_TASKID = "id"
+        private const val COLUMN_TASKID = "task_id"
+        private const val COLUMN_TASKUSERID = "user_id"
         private const val COLUMN_TASKNAME = "taskname"
         private const val COLUMN_TASKDESC = "taskdescription"
         private const val COLUMN_IS_COMPLETED =
             "is_completed"  // Assuming you want this column for completion status
     }
+
+    private var loggedUser= getLoggedInUserId()
 
     // Function for users and tasks table creation
     override fun onCreate(db: SQLiteDatabase?) {
@@ -46,7 +51,9 @@ class DatabaseHelper(val context: Context) :
                 $COLUMN_TASKID INTEGER PRIMARY KEY AUTOINCREMENT, 
                 $COLUMN_TASKNAME TEXT, 
                 $COLUMN_TASKDESC TEXT,
-                $COLUMN_IS_COMPLETED INTEGER DEFAULT 0
+                $COLUMN_IS_COMPLETED INTEGER DEFAULT 0,
+                $COLUMN_TASKUSERID INTEGER,
+                FOREIGN KEY($COLUMN_TASKUSERID) REFERENCES $TABLE_USERS($COLUMN_ID)
             )
         """
 
@@ -54,6 +61,33 @@ class DatabaseHelper(val context: Context) :
         db?.execSQL(createUsersTableQuery)
         db?.execSQL(createTasksTableQuery)
     }
+
+    @SuppressLint("Range")
+    fun setLoginUser(email: String, password: String) {
+        val db = writableDatabase
+        val query = "SELECT $COLUMN_ID FROM $TABLE_USERS WHERE $COLUMN_EMAIL = ? AND $COLUMN_PASSWORD = ?"
+        val cursor = db.rawQuery(query, arrayOf(email, password))
+
+        if (cursor.moveToFirst()) {
+            val userId = cursor.getInt(cursor.getColumnIndex(COLUMN_ID))
+
+            // Store the user ID in SharedPreferences to persist across sessions
+            val sharedPreferences = context.applicationContext.getSharedPreferences("user_prefs", MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+
+            editor.putInt("logged_in_user_id", userId)
+            editor.apply()
+
+        }
+        cursor.close()
+    }
+
+    fun getLoggedInUserId(): Int {
+        val sharedPreferences = context.applicationContext.getSharedPreferences("user_prefs", MODE_PRIVATE)
+        return sharedPreferences.getInt("logged_in_user_id", -1) // -1 means no user is logged in
+    }
+
+
 
     // Function to add users in the database
     fun addUser(username: String, email: String, password: String, confirmpassword: String): Long {
@@ -130,9 +164,12 @@ class DatabaseHelper(val context: Context) :
                 COLUMN_IS_COMPLETED,
                 if (taskItem.isCompleted) 1 else 0
             )  // Assuming isCompleted is a boolean
+            put(COLUMN_TASKUSERID, loggedUser)
         }
 
         val db = writableDatabase
+        db.execSQL("PRAGMA foreign_keys = ON;")
+
         db.insert(TABLE_TASKS, null, values)
         db.close()
     }
@@ -141,7 +178,7 @@ class DatabaseHelper(val context: Context) :
     fun showTask(): MutableList<TaskItem> {
         val taskList = mutableListOf<TaskItem>()
         val db = readableDatabase
-        val query = "SELECT * FROM $TABLE_TASKS"
+        val query = "SELECT * FROM $TABLE_TASKS WHERE $COLUMN_TASKUSERID = $loggedUser"
         val cursor = db.rawQuery(query, null)
 
         // Iterating through all rows to retrieve data
@@ -151,9 +188,10 @@ class DatabaseHelper(val context: Context) :
             val taskDesc = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKDESC))
             val isCompleted =
                 cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_COMPLETED)) == 1  // Convert to boolean
-
+            val taskUserId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TASKUSERID))
             // Create TaskItem instance
-            val task = TaskItem(id, taskName, taskDesc, isCompleted)
+            val task = TaskItem(id, taskName, taskDesc, isCompleted, taskUserId)
+
             taskList.add(task)
         }
 
@@ -175,8 +213,9 @@ class DatabaseHelper(val context: Context) :
             val taskName = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKNAME))
             val taskDesc = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TASKDESC))
             val isCompleted = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_COMPLETED)) == 1
+            val taskUserId = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TASKUSERID))
 
-            val task = TaskItem(id, taskName, taskDesc, isCompleted)
+            val task = TaskItem(id, taskName, taskDesc, isCompleted, taskUserId)
             taskList.add(task)
         }
 
