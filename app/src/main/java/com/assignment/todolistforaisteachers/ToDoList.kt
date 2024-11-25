@@ -1,6 +1,9 @@
 package com.assignment.todolistforaisteachers
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -8,9 +11,12 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.assignment.todolistforaisteachers.databinding.ActivityToDoListBinding
+import com.assignment.todolistforaisteachers.model.TaskModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+
 
 class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTaskSavedListener {
 
@@ -19,6 +25,11 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
     private lateinit var db: DatabaseHelper
 
     private lateinit var adapter: TaskItemAdapter
+
+    private lateinit var databaseFirebase: DatabaseReference
+
+    private lateinit var firebaseModel: TaskModelAdapter
+
 
 
 
@@ -29,7 +40,10 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         binding = ActivityToDoListBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         db = DatabaseHelper(this)
+        databaseFirebase = FirebaseDatabase.getInstance().getReference("task")
+
 
         setRecyclerView()
 
@@ -45,7 +59,7 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
 
         binding.btnNewTask.setOnClickListener {
             try{
-                NewTaskSheet(null).show(supportFragmentManager, "newTaskTag")
+                NewTaskSheet(null, null).show(supportFragmentManager, "newTaskTag")
             }
             catch(e: Exception) {
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -64,22 +78,39 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
 
     private fun setRecyclerView()
     {
-        val taskList = db.showTask()
+        val context = this
+        if(isDeviceOnline(context)){
+            showTaskFirebase()
+            firebaseModel = TaskModelAdapter(mutableListOf(), this)
+            binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+            binding.todoListRecyclerview.adapter = firebaseModel
+        } else {
+            val taskList = db.showTask()
 
-        adapter = TaskItemAdapter(taskList, this)
-        binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
-        binding.todoListRecyclerview.adapter = adapter
+            adapter = TaskItemAdapter(taskList, this)
+            binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+            binding.todoListRecyclerview.adapter = adapter
+        }
+
     }
 
     override fun onTaskSaved(){
-        val updatedTaskList = db.showTask()
-        adapter.updateData(updatedTaskList)
+        val context = this
+        if(isDeviceOnline(context)) {
+            showTaskFirebase()
+            firebaseModel = TaskModelAdapter(mutableListOf(), this)
+            binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+            binding.todoListRecyclerview.adapter = firebaseModel
+        } else {
+            val updatedTaskList = db.showTask()
+            adapter.updateData(updatedTaskList)
+        }
     }
 
     override fun editTaskItem(taskItem: TaskItem)
     {
         try{
-            NewTaskSheet(taskItem).show(supportFragmentManager, "newTasktag")
+            NewTaskSheet(taskItem, null).show(supportFragmentManager, "newTasktag")
         }
         catch(e : Exception){
             Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -154,6 +185,53 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         } else {
             Toast.makeText(this, "No task found", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    fun isDeviceOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || activeNetwork.hasTransport(
+            NetworkCapabilities.TRANSPORT_CELLULAR)
+
+    }
+
+    private fun showTaskFirebase() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(this, "No user is logged in.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        databaseFirebase.child(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val taskList = mutableListOf<TaskModel>()
+                for (taskSnapshot in snapshot.children) {
+                    val task = taskSnapshot.getValue(TaskModel::class.java)
+                    if (task != null) {
+                        taskList.add(task)
+                    }
+                }
+
+                if (taskList.isNotEmpty()) {
+                    firebaseModel.updateData(taskList)
+                    Log.d("Firebase", "Fetched ${taskList.size} tasks for userId: $userId")
+                } else {
+                    Toast.makeText(this@ToDoList, "No tasks found", Toast.LENGTH_SHORT).show()
+                    Log.d("Firebase", "No tasks found for userId: $userId")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(
+                    this@ToDoList,
+                    "Failed to fetch tasks: ${error.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+                Log.e("Firebase", "Database error: ${error.message}")
+            }
+        })
+
     }
 
 }

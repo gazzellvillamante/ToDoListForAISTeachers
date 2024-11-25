@@ -7,29 +7,32 @@ import com.assignment.todolistforaisteachers.databinding.TaskItemCellBinding
 import com.assignment.todolistforaisteachers.model.TaskModel
 
 
-class TaskItemAdapter(
-    private var taskItems : MutableList<TaskItem>,
+class TaskModelAdapter(
+    private var taskItems : MutableList<TaskModel>,
     private val clickListener : TaskItemClickListener,
-): RecyclerView.Adapter<TaskItemViewHolder>()
+): RecyclerView.Adapter<TaskModelViewHolder>()
 
 {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskModelViewHolder {
         val from = LayoutInflater.from(parent.context)
         val binding = TaskItemCellBinding.inflate(from, parent, false)
 
-        return TaskItemViewHolder(parent.context, binding, clickListener)
+        return TaskModelViewHolder(parent.context, binding, clickListener)
     }
 
     override fun getItemCount(): Int = taskItems.size
 
-    override fun onBindViewHolder(holder: TaskItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: TaskModelViewHolder, position: Int) {
         holder.bindTaskItem(taskItems[position])
 
     }
 
-    fun updateData(newData: MutableList<TaskItem>){
+    fun updateData(newData: MutableList<TaskModel>){
         taskItems = newData
         notifyDataSetChanged()
     }
+
+
+
 }

@@ -44,7 +44,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api" />
 
-
         <activity
             android:name=".ToDoList"
             android:exported="false"

@@ -1,5 +1,6 @@
 package com.assignment.todolistforaisteachers
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -13,8 +14,10 @@ import com.google.firebase.auth.auth
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.Uri
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.database
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -25,6 +28,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var authFirebase: FirebaseAuth
     private lateinit var databaseFirebase: DatabaseReference
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnLoginGoogle.setOnClickListener {
             try{
-
+                loginGoogle()
             }
             catch(e:Exception) {
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -132,7 +137,8 @@ class MainActivity : AppCompatActivity() {
 
     //Login using google
     private fun loginGoogle(){
-
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://accounts.google.com/Login"))
+        startActivity(intent)
     }
 
     //Check if device is online

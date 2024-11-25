@@ -1,8 +1,11 @@
 package com.assignment.todolistforaisteachers
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
 import com.assignment.todolistforaisteachers.databinding.ActivitySignUpBinding
 import com.assignment.todolistforaisteachers.model.UserModel
@@ -28,6 +31,7 @@ class SignUp : AppCompatActivity() {
         setContentView(binding.root)
 
         databaseHelper = DatabaseHelper(this)
+        val context = this
 
         //initialize firebase
         authFirebase = Firebase.auth
@@ -41,7 +45,11 @@ class SignUp : AppCompatActivity() {
             val confirmPassword = binding.txtConfirmPassword.text.toString()
 
             try{
-                signupDatabase(username,email, password,confirmPassword)
+                if(isDeviceOnline(context)){
+                    signUpFirebase(username, email, password, confirmPassword)
+                } else {
+                    signupDatabase(username, email, password, confirmPassword)
+                }
             }
             catch(e : Exception){
                 Toast.makeText(this, e.message, Toast.LENGTH_LONG).show()
@@ -94,9 +102,6 @@ class SignUp : AppCompatActivity() {
                 val insertRowId = databaseHelper.addUser(username, email, password,confirmPassword)
                 val intent = Intent(this, MainActivity::class.java)
 
-                authFirebase.createUserWithEmailAndPassword(email ,password)
-                saveData()
-
                 // Checks whether inserting of data into the db was successful or not
                 if (insertRowId != -1L) {
                     Toast.makeText(this, "User successfully registered", Toast.LENGTH_SHORT).show()
@@ -116,6 +121,56 @@ class SignUp : AppCompatActivity() {
         }
     }
 
+    fun isDeviceOnline(context: Context): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || activeNetwork.hasTransport(
+            NetworkCapabilities.TRANSPORT_CELLULAR)
+
+    }
+
+    private fun signUpFirebase(username: String ,email: String, password: String, confirmPassword: String) {
+        try{
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                Toast.makeText(this,"Sign up failed. Enter required fields data",Toast.LENGTH_SHORT
+                ).show()
+
+                return
+            }
+
+            else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()){
+                Toast.makeText(this, "Please enter a valid email", Toast.LENGTH_SHORT).show()
+
+                return
+            }
+
+
+            else if (password.length < 8 || confirmPassword.length < 8) {
+                Toast.makeText(this, "Password should be at least 8 characters", Toast.LENGTH_SHORT)
+                    .show()
+
+                return
+            }
+
+            else if (password != confirmPassword) {
+                Toast.makeText(this, "Signup Failed. Password mismatch", Toast.LENGTH_SHORT).show()
+
+                return
+            }
+
+            else {
+                authFirebase.createUserWithEmailAndPassword(email, password)
+                saveData()
+                startActivity(Intent(this, MainActivity::class.java))
+                finish()
+
+            }
+        } catch(e: Exception){
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
     //Save data to Firebase realtime database
     private fun saveData() {
@@ -123,9 +178,10 @@ class SignUp : AppCompatActivity() {
         val email = binding.txtEmail.text.toString()
         val password = binding.txtPassword.text.toString()
         val confirmPassword = binding.txtConfirmPassword.text.toString()
-
-        val user = UserModel(username, email, password, confirmPassword)
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
+
+        val user = UserModel(username, email, password, confirmPassword, userId)
+
         databaseFirebase.child("user").child(userId).setValue(user)
     }
 

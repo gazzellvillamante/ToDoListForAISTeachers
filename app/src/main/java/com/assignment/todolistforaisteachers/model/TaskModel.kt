@@ -1,8 +1,9 @@
 package com.assignment.todolistforaisteachers.model
 
 data class TaskModel(
-    val taskName: String? = null,
-    val taskDesc: String? = null,
-    val isCompleted: Boolean? = null,
-    val userId: String? = null
+    val taskId: String = "",
+    val taskName: String = "",
+    val taskDesc: String = "",
+    val isCompleted: Boolean = false,
+    val userId: String = ""
 )

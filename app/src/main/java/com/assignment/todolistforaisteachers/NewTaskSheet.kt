@@ -20,7 +20,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 
 
-class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
+class NewTaskSheet(var taskItem: TaskItem?, var taskModel: TaskModel?) : BottomSheetDialogFragment()
 {
 
     interface OnTaskSavedListener {
@@ -48,19 +48,27 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
 
 
         //Add Task and Edit Task shares the same fragement
-        if(taskItem != null)
-        {
-            binding.tvTaskTitle.text = "Edit Task"
-            binding.saveButton.text = "Update Task"
-            val editable = Editable.Factory.getInstance()
-            binding.taskName.text = editable.newEditable(taskItem!!.name)
-            binding.taskDescription.text = editable.newEditable(taskItem!!.desc)
+        if(isDeviceOnline(requireContext())){
+            if(taskModel != null){
+                binding.tvTaskTitle.text = "Edit Task"
+                binding.saveButton.text = "Update Task"
+                val editable = Editable.Factory.getInstance()
+                binding.taskName.text = editable.newEditable(taskModel!!.taskName)
+                binding.taskDescription.text = editable.newEditable(taskModel!!.taskDesc)
+            } else {
+                binding.tvTaskTitle.text = "Add Task"
+            }
+        } else {
+            if(taskItem != null) {
+                binding.tvTaskTitle.text = "Edit Task"
+                binding.saveButton.text = "Update Task"
+                val editable = Editable.Factory.getInstance()
+                binding.taskName.text = editable.newEditable(taskItem!!.name)
+                binding.taskDescription.text = editable.newEditable(taskItem!!.desc)
 
-        }
-
-        else
-        {
-            binding.tvTaskTitle.text = "Add Task"
+            } else {
+                binding.tvTaskTitle.text = "Add Task"
+            }
         }
 
         binding.saveButton.setOnClickListener {
@@ -109,27 +117,27 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
             return
         }
 
-        // Add new task if taskItem is empty
-        if (taskItem == null){
-           val newTask = TaskItem(0,name,desc,false, 0)
-
-
-            if (isDeviceOnline(requireContext())) {
-                saveTaskData()  // Uses Firebase when device is online
-            } else {
-                db.addTask(newTask) // Uses SQLite when device is offline
+        // Add new task if taskItem or taskModel is empty
+        if(isDeviceOnline(requireContext())){
+            if(taskModel == null) {
+                val newTask = TaskModel("", name, desc,false, "")
+                saveTaskData(newTask)
+                Toast.makeText(context, "Task added successfully", Toast.LENGTH_SHORT).show()
+            }else {
+                //update existing task in firebase
             }
-
-
-            Toast.makeText(context, "Task added successfully", Toast.LENGTH_SHORT).show()
-        }
-
-        else{
-            // Edit existing task
-            taskItem?.name = name
-            taskItem?.desc = desc
-            db.editTask(taskItem!!)
-            Toast.makeText(context, "Task added updated", Toast.LENGTH_SHORT).show()
+        } else {
+            if(taskItem == null) {
+                val newTask = TaskItem(0, name,desc, false, 0)
+                db.addTask(newTask)
+                Toast.makeText(context, "Task added successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                //Edit existing Task
+                taskItem?.name = name
+                taskItem?.desc = desc
+                db.editTask(taskItem!!)
+                Toast.makeText(context, "Task updated", Toast.LENGTH_SHORT).show()
+            }
         }
 
         // Clear input fields after saving
@@ -141,15 +149,43 @@ class NewTaskSheet(var taskItem: TaskItem?) : BottomSheetDialogFragment()
         dismiss()
     }
 
-    private fun saveTaskData() {
-        val taskName = binding.taskName.text.toString()
-        val taskDesc = binding.taskDescription.text.toString()
-        val isCompleted = false
-        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+    private fun saveTaskData(newTask: TaskModel) {
+        // Retrieve the current user's ID
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-        val task = TaskModel(taskName, taskDesc, isCompleted, userId)
+        // Ensure the user is logged in
+        if (userId == null) {
+            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        databaseFirebase.child("task").child(userId).setValue(task)
+        // Generate a unique key for the new task
+        val taskKey = databaseFirebase.child("task").child(userId).push().key
+
+        if (taskKey == null) {
+            Toast.makeText(context, "Failed to generate task key", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Create a task object with the generated task ID and user ID
+        val task = TaskModel(
+            taskId = taskKey,
+            taskName = newTask.taskName,
+            taskDesc = newTask.taskDesc,
+            isCompleted = newTask.isCompleted,
+            userId = userId
+        )
+
+
+        // Save the task under the user's node using the unique key
+        databaseFirebase.child("task").child(userId).child(taskKey).setValue(task)
+            .addOnSuccessListener {
+                Toast.makeText(context, "Task saved successfully", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(context, "Failed to save task: ${exception.message}", Toast.LENGTH_LONG).show()
+            }
     }
+
 
 }
