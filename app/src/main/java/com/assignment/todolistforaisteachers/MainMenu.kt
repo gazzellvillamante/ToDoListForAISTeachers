@@ -29,6 +29,7 @@ class MainMenu : AppCompatActivity() {
         val browseWeb = Intent(this, BrowseWeb::class.java)
         val logout = Intent(this, MainActivity::class.java)
         val toDoList = Intent(this, ToDoList::class.java)
+        val intentVideoPlayer = Intent(this, VideoPlayer::class.java)
 
 
         navView.setNavigationItemSelectedListener {
@@ -45,6 +46,8 @@ class MainMenu : AppCompatActivity() {
                 R.id.nav_sendEmail -> startActivity(sendEmail)
 
                 R.id.nav_browseWeb -> startActivity(browseWeb)
+
+                R.id.nav_videoPlayer -> startActivity(intentVideoPlayer)
 
                 R.id.nav_logout -> startActivity(logout)
 

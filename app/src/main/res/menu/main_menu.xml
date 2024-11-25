@@ -36,6 +36,16 @@
             android:icon= "@drawable/baseline_web_24"/>
 
         <item
+            android:id= "@+id/nav_videoPlayer"
+            android:title= "Video Player"
+            android:icon= "@drawable/baseline_video_library_24"/>
+
+        <item
+            android:id= "@+id/nav_Calendar"
+            android:title= "Calendar"
+            android:icon= "@drawable/baseline_calendar_month_24"/>
+
+        <item
             android:id= "@+id/nav_logout"
             android:title= "Logout"
             android:icon= "@drawable/baseline_logout_24"/>
