@@ -185,12 +185,6 @@ class NewTaskSheet(var taskItem: TaskItem?, var taskModel: TaskModel?) : BottomS
 
         // Save the task under the user's node using the unique key
         databaseFirebase.child("task").child(userId).child(taskKey).setValue(task)
-            .addOnSuccessListener {
-                Toast.makeText(context, "Task saved successfully", Toast.LENGTH_SHORT).show()
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(context, "Failed to save task: ${exception.message}", Toast.LENGTH_LONG).show()
-            }
     }
 
     private fun updateTaskFirebase(updatedTask: TaskModel) {
