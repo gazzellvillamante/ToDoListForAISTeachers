@@ -6,6 +6,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.database
 
 
@@ -125,6 +127,10 @@ class NewTaskSheet(var taskItem: TaskItem?, var taskModel: TaskModel?) : BottomS
                 Toast.makeText(context, "Task added successfully", Toast.LENGTH_SHORT).show()
             }else {
                 //update existing task in firebase
+                taskModel?.taskName = name
+                taskModel?.taskDesc = desc
+                updateTaskFirebase(taskModel!!)
+                Toast.makeText(context, "Task updated", Toast.LENGTH_SHORT).show()
             }
         } else {
             if(taskItem == null) {
@@ -187,5 +193,26 @@ class NewTaskSheet(var taskItem: TaskItem?, var taskModel: TaskModel?) : BottomS
             }
     }
 
+    private fun updateTaskFirebase(updatedTask: TaskModel) {
+        //retrieve userId from logged in user
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if(updatedTask.taskId.isNullOrEmpty()){
+            Toast.makeText(context, "Invalid Task ID", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        Log.d("Firebase", "Updating task at path: task/$userId/${updatedTask.taskId}")
+        Log.d("Firebase", "Task data: $updatedTask")
+
+
+        //Update the existing task in realtime database
+        databaseFirebase.child("task").child(userId).child(updatedTask.taskId).setValue(updatedTask)
+
+    }
 
 }

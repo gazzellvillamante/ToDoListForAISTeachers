@@ -117,6 +117,14 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         }
     }
 
+    override fun editTaskFirebase(taskModel: TaskModel){
+        try{
+            NewTaskSheet(null, taskModel).show(supportFragmentManager, "newTasktag")
+        } catch(e: Exception){
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun completeTaskItem(taskItem: TaskItem, isChecked: Boolean)
     {

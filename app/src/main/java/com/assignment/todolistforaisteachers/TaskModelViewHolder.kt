@@ -35,9 +35,9 @@ class TaskModelViewHolder(
             binding.tvName.setTextColor(ContextCompat.getColor(context, R.color.white))
         }
 
-//        binding.taskCellContainer.setOnClickListener{
-//            clickListener.editTaskItem(taskModel)
-//        }
+        binding.taskCellContainer.setOnClickListener{
+            clickListener.editTaskFirebase(taskModel)
+        }
 //
 //        binding.btnDelete.setOnClickListener{
 //            clickListener.deleteTaskItem(taskModel)
