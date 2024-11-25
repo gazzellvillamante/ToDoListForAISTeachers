@@ -181,6 +181,48 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         alertDialogBox.show()
     }
 
+    override fun deleteTaskFirebase(taskModel: TaskModel){
+        val alertDialog = AlertDialog.Builder(this)
+
+        alertDialog.setTitle("Delete Task")
+        alertDialog.setMessage("Are you sure you want to delete this task?")
+
+        alertDialog.setPositiveButton("Yes") { _, _ ->
+            try{
+                val userId = FirebaseAuth.getInstance().currentUser!!.uid
+                if (userId == null) {
+                    Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show()
+                }
+
+                if (taskModel.taskId.isEmpty()) {
+                    Toast.makeText(this, "Invalid Task ID", Toast.LENGTH_SHORT).show()
+                }
+
+                val taskRef = FirebaseDatabase.getInstance().getReference("task/$userId/${taskModel.taskId}")
+                taskRef.removeValue()
+
+                showTaskFirebase()
+                firebaseModel = TaskModelAdapter(mutableListOf(), this)
+                binding.todoListRecyclerview.layoutManager = LinearLayoutManager(applicationContext)
+                binding.todoListRecyclerview.adapter = firebaseModel
+
+            } catch(e: Exception){
+                Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        alertDialog.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss()
+        }
+
+        val alertDialogBox = alertDialog.create()
+
+        alertDialogBox.show()
+
+
+
+    }
+
     override fun onPause(){
         super.onPause()
         Log.d("ToDoList", "Activity pause - NewTaskSheet is shown")

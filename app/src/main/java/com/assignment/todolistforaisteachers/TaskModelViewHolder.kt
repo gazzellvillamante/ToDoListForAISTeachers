@@ -38,10 +38,10 @@ class TaskModelViewHolder(
         binding.taskCellContainer.setOnClickListener{
             clickListener.editTaskFirebase(taskModel)
         }
-//
-//        binding.btnDelete.setOnClickListener{
-//            clickListener.deleteTaskItem(taskModel)
-//        }
+
+        binding.btnDelete.setOnClickListener{
+            clickListener.deleteTaskFirebase(taskModel)
+        }
 //
 //        // Handle checkbox click
 //        binding.cbTask.setOnCheckedChangeListener { _, isChecked ->
