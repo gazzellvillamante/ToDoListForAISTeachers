@@ -147,6 +147,30 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
 
     }
 
+    override fun completeTaskModel(taskModel: TaskModel, isChecked: Boolean){
+        try{
+
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+            if(userId == null){
+                Toast.makeText(this, "User is not logged in.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            if(taskModel.taskId.isEmpty()){
+                Toast.makeText(this, "Invalid Task ID.", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            val taskRef = FirebaseDatabase.getInstance().getReference("task/$userId/${taskModel.taskId}")
+            taskRef.child("completed").setValue(isChecked)
+
+        }catch(e: Exception){
+            Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
     override fun deleteTaskItem(taskItem: TaskItem) {
         val alertDialog = AlertDialog.Builder(this)
 

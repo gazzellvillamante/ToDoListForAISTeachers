@@ -21,7 +21,7 @@ class TaskModelViewHolder(
         binding.tvName.text = taskModel.taskName
         binding.cbTask.isChecked = taskModel.isCompleted == true
 
-        if(taskModel.isCompleted == true){
+        if(taskModel.isCompleted){
             binding.cbTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             binding.cbTask.buttonTintList = ColorStateList.valueOf(Color.RED)
             binding.tvName.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
@@ -35,6 +35,7 @@ class TaskModelViewHolder(
             binding.tvName.setTextColor(ContextCompat.getColor(context, R.color.white))
         }
 
+
         binding.taskCellContainer.setOnClickListener{
             clickListener.editTaskFirebase(taskModel)
         }
@@ -42,11 +43,28 @@ class TaskModelViewHolder(
         binding.btnDelete.setOnClickListener{
             clickListener.deleteTaskFirebase(taskModel)
         }
-//
-//        // Handle checkbox click
-//        binding.cbTask.setOnCheckedChangeListener { _, isChecked ->
-//            clickListener.completeTaskItem(taskModel, true)
-//        }
+
+        // Handle checkbox click
+        binding.cbTask.setOnCheckedChangeListener { _, isChecked ->
+
+            taskModel.isCompleted = isChecked
+            clickListener.completeTaskModel(taskModel, true)
+
+            if(taskModel.isCompleted){
+                binding.cbTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                binding.cbTask.buttonTintList = ColorStateList.valueOf(Color.RED)
+                binding.tvName.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvName.setTextColor(ContextCompat.getColor(context, R.color.red))
+            }
+            else{
+                binding.cbTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+                binding.cbTask.buttonTintList = ColorStateList.valueOf(Color.LTGRAY)
+                binding.cbTask.setTextColor(ContextCompat.getColor(context, R.color.white))
+                binding.tvName.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG.inv()
+                binding.tvName.setTextColor(ContextCompat.getColor(context, R.color.white))
+            }
+
+        }
     }
 
 

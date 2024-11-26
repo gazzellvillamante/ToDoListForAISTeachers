@@ -33,6 +33,12 @@ class TaskModelAdapter(
         notifyDataSetChanged()
     }
 
-
+    fun updateTaskItem(updatedTask: TaskModel) {
+        val index = taskItems.indexOfFirst { it.taskId == updatedTask.taskId }
+        if (index != -1) {
+            taskItems[index] = updatedTask
+            notifyItemChanged(index)
+        }
+    }
 
 }

@@ -4,6 +4,6 @@ data class TaskModel(
     val taskId: String = "",
     var taskName: String = "",
     var taskDesc: String = "",
-    val isCompleted: Boolean = false,
+    var isCompleted: Boolean = false,
     val userId: String = ""
 )
