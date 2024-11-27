@@ -67,11 +67,21 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         }
 
         binding.btnSearch.setOnClickListener {
-            val searchString = binding.etSearch.text.toString()
-            try{
-                searchTask(searchString)
-            } catch(e:Exception){
-                Toast.makeText(this,e.message, Toast.LENGTH_LONG).show()
+            val searchString = binding.etSearch.text.toString().trim()
+            if(searchString.isNotEmpty()){
+                try{
+                    if(isDeviceOnline(this)){
+                        searchTaskFirebase(searchString)
+                    } else {
+                        searchTask(searchString)
+                    }
+
+                } catch(e:Exception){
+                    Toast.makeText(this,e.message, Toast.LENGTH_LONG).show()
+                }
+            } else {
+
+                setRecyclerView()
             }
         }
     }
@@ -254,7 +264,7 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
 
     private fun searchTask(searchString: String) {
         val tasks = db.searchTask(searchString)
-        if(tasks.isNotEmpty()){
+        if (tasks.isNotEmpty()) {
             adapter.updateData(tasks)
         } else {
             Toast.makeText(this, "No task found", Toast.LENGTH_SHORT).show()
@@ -307,5 +317,49 @@ class ToDoList : AppCompatActivity(), TaskItemClickListener, NewTaskSheet.OnTask
         })
 
     }
+
+    private fun searchTaskFirebase(searchString: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId == null) {
+            Toast.makeText(this, "No user is logged in.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        databaseFirebase.child(userId)
+            .orderByChild("taskName")
+            .startAt(searchString)
+            .endAt(searchString + "\uf8ff") // Ensures case-insensitive prefix search
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val taskList = mutableListOf<TaskModel>()
+                    for (taskSnapshot in snapshot.children) {
+                        val task = taskSnapshot.getValue(TaskModel::class.java)
+                        if (task != null) {
+                            taskList.add(task)
+                        }
+                    }
+
+                    if (taskList.isNotEmpty()) {
+                        firebaseModel.updateData(taskList)
+                        Toast.makeText(this@ToDoList, "Found ${taskList.size} tasks", Toast.LENGTH_SHORT).show()
+                        Log.d("Firebase", "Search returned ${taskList.size} results.")
+                    } else {
+                        Toast.makeText(this@ToDoList, "No tasks found", Toast.LENGTH_SHORT).show()
+                        Log.d("Firebase", "No tasks matched the search query.")
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Toast.makeText(
+                        this@ToDoList,
+                        "Search failed: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.e("Firebase", "Search error: ${error.message}")
+                }
+            })
+    }
+
 
 }
