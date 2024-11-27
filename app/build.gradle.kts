@@ -47,7 +47,6 @@ android {
 }
 
 dependencies {
-
     implementation (libs.material.v190)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -62,6 +61,7 @@ dependencies {
     implementation(libs.play.services.auth)
     implementation(libs.firebase.database)
     implementation(libs.firebase.common.ktx)
+    implementation(libs.protolite.well.known.types)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

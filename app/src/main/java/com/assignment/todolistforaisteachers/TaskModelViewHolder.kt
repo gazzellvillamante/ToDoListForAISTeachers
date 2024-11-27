@@ -48,7 +48,7 @@ class TaskModelViewHolder(
         binding.cbTask.setOnCheckedChangeListener { _, isChecked ->
 
             taskModel.isCompleted = isChecked
-            clickListener.completeTaskModel(taskModel, true)
+            clickListener.completeTaskModel(taskModel, isChecked)
 
             if(taskModel.isCompleted){
                 binding.cbTask.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
