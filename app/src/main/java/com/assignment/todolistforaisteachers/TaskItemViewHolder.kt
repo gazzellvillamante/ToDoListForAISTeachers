@@ -44,7 +44,7 @@ class TaskItemViewHolder(
 
         // Handle checkbox click
         binding.cbTask.setOnCheckedChangeListener { _, isChecked ->
-            clickListener.completeTaskItem(taskItem, true)
+            clickListener.completeTaskItem(taskItem, isChecked)
         }
     }
 

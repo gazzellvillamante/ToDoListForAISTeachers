@@ -8,7 +8,7 @@ import com.assignment.todolistforaisteachers.databinding.TaskItemCellBinding
 
 class TaskItemAdapter(
     private var taskItems : MutableList<TaskItem>,
-    private val clickListener : TaskItemClickListener,
+    private val clickListener : TaskItemClickListener
 ): RecyclerView.Adapter<TaskItemViewHolder>()
 
 {
